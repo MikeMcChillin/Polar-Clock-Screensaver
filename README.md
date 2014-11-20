@@ -1,7 +1,7 @@
 polar-clock-screensaver
 =======================
 
-![Preview](https://github.com/mikemcchillin/polar-clock-screensaver/raw/master/PolarClock/Resources/preview.png "Preview")
+![Preview](https://github.com/mikemcchillin/polar-clock-screensaver/raw/master/PolarClock.saver/Contents/Resources/preview.png "Preview")
 
 A screensaver of a simple d3 js Polar Clock inspired by [Pixel Breaker](http://blog.pixelbreaker.com/polarclock) that works on any MacOS, including Mavericks and Yosemite.
 
