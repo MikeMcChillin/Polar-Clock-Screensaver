@@ -9,6 +9,7 @@ A screensaver of a simple d3 js Polar Clock inspired by [Pixel Breaker](http://b
 Download the lastest version [here](https://github.com/MikeMcChillin/polar-clock-screensaver/releases/latest)
 
 # Credits
-[mbostock demo](http://bl.ocks.org/mbostock/1096355)
-[momentjs](http://momentjs.com/)
-[d3](d3js.org)
+* [mbostock demo](http://bl.ocks.org/mbostock/1096355)
+* [WebSaver](https://github.com/tlrobinson/WebSaver)
+* [momentjs](http://momentjs.com/)
+* [d3](d3js.org)
