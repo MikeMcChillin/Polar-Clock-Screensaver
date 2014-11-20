@@ -1,0 +1,180 @@
+
+<!DOCTYPE html>
+  <head>
+    <meta charset="utf-8">
+    <title>Polar Clock</title>
+    <style>
+      *,
+      *:before,
+      *:after {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      body {
+        background: #111;
+        font-family: 'Courier New';
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin: auto;
+        position: relative;
+        overflow: hidden;
+        -webkit-user-select: none;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+      }
+
+    #human-time {
+      color: #444;
+      font-size: 0.8em;
+      text-align: right;
+      position: absolute;
+      bottom: 2em;
+      right: 2em;
+    }
+
+    #day-of-week {
+      display: block;
+    }
+
+    </style>
+  </head>
+  <body>
+    <div id="human-time">
+      <span id="day-of-week"></span><span id="date"></span>
+      <div>
+        <span id="hours-minutes-seconds"></div>
+      </div>
+    </div>
+    <script src="d3.js"></script>
+    <script src="moment.js"></script>
+    <script>
+
+      var width = window.innerWidth;
+      var height = window.innerHeight;
+      var cornerRadius = 5;
+      var dayOfWeek, month, day, hoursMinutesSeconds;
+
+      var radius = Math.min(width, height) / 2.2, //1.9,
+          spacing = 0.09; //.09;
+
+      var formatSecond = d3.time.format("%S s"),
+          formatMinute = d3.time.format("%M m"),
+          formatHour = d3.time.format("%H h"),
+          formatDay = d3.time.format("%a"),
+          formatDate = d3.time.format("%d d"),
+          formatMonth = d3.time.format("%b");
+
+      var color = d3.scale.linear()
+          .range(["hsl(-360,90%,65%)", "hsl(360,90%,65%)"])
+          .interpolate(interpolateHsl);
+
+      var arc = d3.svg.arc()
+          .startAngle(0)
+          .endAngle(function(d) { return d.value * 2 * Math.PI; })
+          .innerRadius(function(d) { return d.index * radius; })
+          .outerRadius(function(d) { return (d.index + spacing) * radius; })
+          .cornerRadius(cornerRadius);
+
+      var svg = d3.select("body").append("svg")
+          .attr("width", width)
+          .attr("height", height)
+          .append("g")
+          .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+      var field = svg.selectAll("g")
+        .data(fields)
+        .enter().append("g");
+
+      field.append("path");
+
+      // field.append("text");
+
+      d3.transition().duration(0).each(tick);
+
+      d3.select(self.frameElement).style("height", height + "px");
+
+      // Human Time
+      function tellTheTime() {
+        humanTime = moment().format('MMMM Do YYYY, h:mm:ss a');
+        dayOfWeek = moment().format('dddd');
+        date = moment().format('ll');
+        hoursMinutesSeconds = moment().format('h:mm A');
+        document.getElementById('day-of-week').innerHTML = dayOfWeek;
+        document.getElementById('date').innerHTML = date;
+        document.getElementById('hours-minutes-seconds').innerHTML = hoursMinutesSeconds;
+
+      }
+
+      function tick() {
+        field = field
+            .each(function(d) { this._value = d.value; })
+            .data(fields)
+            .each(function(d) { d.previousValue = this._value; });
+
+        field.select("path")
+          .transition()
+            .ease("linear")
+            .attrTween("d", arcTween)
+            .style("fill", function(d) { return color(d.value); });
+
+        // field.select("text")
+        //     .attr("dy", function(d) { return d.value < .5 ? "-.5em" : "1em"; })
+        //     .text(function(d) { return d.text; })
+        //   .transition()
+        //     .ease("linear")
+        //     .attr("transform", function(d) {
+        //       return "rotate(" + 360 * d.value + ")"
+        //           + "translate(0," + -(d.index + spacing / 2) * radius + ")"
+        //           + "rotate(" + (d.value < .5 ? -90 : 90) + ")"
+        //     });
+
+        tellTheTime();
+
+        setTimeout(tick, 1000 - Date.now() % 1000);
+      }
+
+      function arcTween(d) {
+        var i = d3.interpolateNumber(d.previousValue, d.value);
+        return function(t) { d.value = i(t); return arc(d); };
+      }
+
+      function fields() {
+        var now = new Date;
+        return [
+          // {index: .7, text: formatSecond(now), value: now.getSeconds() / 60},
+          // {index: .6, text: formatMinute(now), value: now.getMinutes() / 60},
+          // {index: .5, text: formatHour(now),   value: now.getHours() / 24},
+          // {index: .3, text: formatDay(now),    value: now.getDay() / 7},
+          // {index: .2, text: formatDate(now),   value: (now.getDate() - 1) / (32 - new Date(now.getYear(), now.getMonth(), 32).getDate())},
+          // {index: .1, text: formatMonth(now),  value: now.getMonth() / 12}
+          {index: .6, text: formatSecond(now), value: now.getSeconds() / 60},
+          {index: .5, text: formatMinute(now), value: now.getMinutes() / 60},
+          {index: .4, text: formatHour(now),   value: now.getHours() / 24},
+          {index: .3, text: formatDay(now),    value: now.getDay() / 7},
+          {index: .2, text: formatDate(now),   value: (now.getDate() - 1) / (32 - new Date(now.getYear(), now.getMonth(), 32).getDate())},
+          {index: .1, text: formatMonth(now),  value: now.getMonth() / 12}
+        ];
+      }
+
+
+      // Avoid shortest-path interpolation.
+      function interpolateHsl(a, b) {
+        var i = d3.interpolateString(a, b);
+        return function(t) {
+          return d3.hsl(i(t));
+        };
+      }
+
+
+    </script>
+  </body>
+</html>
