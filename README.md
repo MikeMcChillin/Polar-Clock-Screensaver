@@ -9,7 +9,11 @@ The above screenshot is an example of the clock at 9:49:33 PM
 A screensaver of a simple d3 js Polar Clock inspired by [Pixel Breaker](http://blog.pixelbreaker.com/polarclock) that works on any MacOS, including Mavericks and Yosemite.
 
 # Installation
-Download the lastest version [here](https://github.com/MikeMcChillin/polar-clock-screensaver/releases/latest)
+* Download the lastest version [here](https://github.com/MikeMcChillin/polar-clock-screensaver/releases/latest)
+* Right-click Web.saver & select "Open"
+* Click "Open" again to set in Mac's System Preferences
+* Enjoy those sweet, sweet curves
+
 
 # Credits
 * [mbostock demo](http://bl.ocks.org/mbostock/1096355)
